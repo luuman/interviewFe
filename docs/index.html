@@ -47,7 +47,15 @@
       top: -4px;
     }
   </style>
-
+  <style type="text/css">
+    body{
+      background: #000;
+    }
+    main {
+      z-index: 1;
+      background: var(--background);
+    }
+  </style>
 </head>
 
 <body>
@@ -56,7 +64,7 @@
   <script>
     // Docsify
     window.$docsify = {
-      // coverpage: true,
+      coverpage: true,
       // loadNavbar: true,
       loadSidebar: true,
       subMaxLevel: 4,
@@ -114,7 +122,8 @@
           highlightColor: '#d22778',
           sidebarSublink: '#b4b4b4',
           codeTypeColor: '#ffffff',
-          coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
+          coverBackground: '#000',
+          // coverBackground: 'radial-gradient(50% 100%,#180526 0,#040e21 100%)',
           toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/icons/sun.svg)'
         },
         light: {
@@ -129,18 +138,38 @@
           highlightColor: '#d22778',
           sidebarSublink: '#b4b4b4',
           codeTypeColor: '#091a28',
-          coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
+          coverBackground: '#000',
+          // coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
           toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/icons/moon.svg)'
         }
       },
       plugins: [
+        function (hook, vm) {
+          hook.beforeEach(function (html) {
+            let urlList = window.location.href.split('/')
+            if (urlList.length === 7 && urlList[6] === '') {
+              let arrayList = html.split(',');
+              console.log(arrayList)
+              var name = arrayList[0];
+              var value = arrayList[1];
+              var editHtml = `${name} \n`
+              editHtml += '\n'
+              for (let i = 0; i < value; i++) {
+                editHtml += `[filename](../${name}/${i + 1}.md ':include :type=text')\n`
+                editHtml += '\n'
+              }
+              console.log(editHtml)
+              return editHtml
+            }
+          });
+        },
         // github editHtml
         function(hook, vm) {
           hook.beforeEach(function(html) {
             var url =
               'https://github.com/docsifyjs/docsify/blob/master/docs/' +
               vm.route.file;
-            var editHtml = '[📝Edit MD](' + url + ')\n';
+            var editHtml = '[📝 Edit MD](' + url + ')\n';
             return (
               editHtml +
               html
@@ -154,7 +183,7 @@
           hook.beforeEach(function(html) {            
             let nums = 0;
             var htmlMD = html.replace( /[#?]+/g,function ($0){
-              var str = nums < 1 ? '[☑]()' : '🗵';
+              var str = nums < 1 ? '[☑]()' : '☒';
               nums++;
               return `${$0} ${str}`;
             });
@@ -164,7 +193,9 @@
       ]
     };
   </script>
-  
+  <!-- three.min.js -->
+  <script src='./js/coverpage/three.min.js'></script>
+
   <!-- docsify -->
   <!-- <script src="https://luuman.github.io/docsify-themeable/assets/js/main.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
@@ -217,6 +248,99 @@
   <!-- docsify-accordion -->
   <link rel="stylesheet" href="//unpkg.com/docsify-accordion/src/style.css">
   <script src="//unpkg.com/docsify-accordion/src/index.js"></script>
-</body>
+  <script>
+    window.onload = function () {
+      var container = document.getElementById("container");
+      var width = container.clientWidth;
+      var height = container.clientHeight;
+      var aspect = width / height;
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(width, height);
+      container.appendChild(renderer.domElement);
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
+      camera.position.z = 500
+      system = new THREE.Group();
+      scene.add(
+        new THREE.AmbientLight(0xFFFFFF, 0.2)
+      );
+      var light = new THREE.DirectionalLight(0xFFFFFF, 2.5);
+      light.position.set(1500, 2500, 0);
+      scene.add(light);
 
+      var material = new THREE.MeshLambertMaterial({
+        color: 0x0C2D4D
+      });
+
+      var planet = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(100, 3),
+        material
+      );
+
+      for (var i = 0; i < planet.geometry.vertices.length; i++)
+        planet.geometry.vertices[i].multiplyScalar(
+          Math.random() * 0.05 + 0.95
+        );
+
+      planet.geometry.computeFlatVertexNormals();
+      system.add(planet);
+
+      var asteroids = new THREE.Group();
+
+      for (var p = 0; p < Math.PI * 2; p = p + Math.random() * 0.15) {
+        var asteroid = new THREE.Mesh(
+          new THREE.IcosahedronGeometry(8, 0),
+          material
+        );
+
+        var size = Math.random() * 0.5;
+        for (var i = 0; i < asteroid.geometry.vertices.length; i++)
+          asteroid.geometry.vertices[i].multiplyScalar(
+            Math.random() * 0.5 + size
+          );
+
+        rand = Math.random() * 60 - 30;
+        asteroid.position.set(200 * Math.sin(p) + rand, rand, 200 * Math.cos(p) + rand);
+
+        asteroid.geometry.computeFlatVertexNormals();
+        asteroids.add(asteroid);
+      }
+
+      system.add(asteroids);
+
+      system.rotation.x = 0.1;
+      system.rotation.y = -.3;
+      system.rotation.z = -0.4;
+
+      scene.add(system);
+
+      for (i = 0; i < 10; i++) {
+        particles = new THREE.Points(
+          new THREE.Geometry(),
+          new THREE.PointsMaterial({
+            size: Math.random() * 5
+          })
+        );
+        for (j = 0; j < 20; j++) {
+          var vertex = new THREE.Vector3();
+          vertex.x = Math.random() * width * 1.1 - width * 1.1 / 2;
+          vertex.y = Math.random() * height * 1.1 - height * 1.1 / 2;
+          vertex.z = -500;
+          particles.geometry.vertices.push(vertex);
+          particles.material.color.setScalar(Math.random() * 0.4 + 0.2);
+        }
+        scene.add(particles);
+      }
+
+      function render() {
+        requestAnimationFrame(render);
+        planet.rotation.y += 0.001;
+        planet.rotation.z -= 0.0005;
+        asteroids.rotation.y += 0.003;
+        renderer.render(scene, camera);
+      }
+      render();
+    }
+  </script>
+</body>
 </html>

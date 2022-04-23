@@ -48,8 +48,17 @@
     }
   </style>
   <style type="text/css">
+    ul.accordion-wrapper > li.active > p:first-of-type::after{
+      border-bottom-color: var(--background) !important;
+    }
+    .accordion {
+      background: #081623 !important;
+    }
+    .accordion.active .accordion-content-container{
+      background: var(--background);
+    }
     body{
-      background: #000;
+      /* background: #000; */
     }
     main {
       z-index: 1;
@@ -149,9 +158,10 @@
             let urlList = window.location.href.split('/')
             if (urlList.length === 7 && urlList[6] === '') {
               let arrayList = html.split(',');
-              console.log(arrayList)
               var name = arrayList[0];
               var value = arrayList[1];
+              console.log(value)
+              if (!value) return html
               var editHtml = `${name} \n`
               editHtml += '\n'
               for (let i = 0; i < value; i++) {

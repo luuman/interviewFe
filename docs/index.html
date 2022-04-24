@@ -212,6 +212,27 @@
           });
         },
         function(hook, vm) {
+          hook.beforeEach(function(html) {
+            return html + '\n' + '⏰ 更新于： {docsify-updated} ';
+          });
+          hook.doneEach(function() {
+            var label, domObj, main, divEle, gitalk;
+            label = vm.route.path.split('/').pop();
+            domObj = Docsify.dom;
+            main = domObj.getNode('#main');
+            Array.apply(null, document.querySelectorAll('div.gitalk-container')).forEach(function(ele) {
+              ele.remove();
+            });
+            divEle = domObj.create('div');
+            divEle.id = 'gitalk-container-' + label;
+            divEle.className = 'gitalk-container';
+            divEle.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            domObj.appendTo(domObj.find('.content'), divEle);
+            gitalk = new Gitment(Object.assign(gitalkConfig, { id: !label ? 'home' : label }));
+            gitalk.render('gitalk-container-' + label);
+          });
+        },
+        function(hook, vm) {
           hook.afterEach(function(html, next) {
             console.log(html, 'afterEach')
             next(html);
@@ -280,18 +301,32 @@
   <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
 
   <!-- gitalk -->
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+
   <script>
-    const gitalk = new Gitalk({
+    // var gitalkConfig = {
+    //   clientID: 'e46f6dec7c07145c652c',
+    //     clientSecret: 'd1a0b627f9b76d21bd3080d1777d0aa0ad55dd83',
+    //     accessToken: '6a2f4d91a1f188a2089e70c2a7b63628f3e9e664',
+    //     repo: 'gitalk',
+    //     owner: 'gitalk',
+    //     admin: ['booxood', 'mamboer'],
+    //     id: 'Demo',
+    //     distractionFreeMode: true
+    // };
+    var gitalkConfig = {
       clientID: '7f50019c6a02c37e7aca',
-      clientSecret: '25dc8d753e2c73fad1ea5845e3caa7700555dfa7',
-      repo: 'luuman.github.io',
+      clientSecret: '027d2b01d7915f1de834d3bba483749ef9ac9c56',
+      repo: 'interviewFe',
       owner: 'luuman',
-      admin: ['Github repo collaborators, only these guys can initialize github issues'],
-      // facebook-like distraction free mode
+      githubID: '\x78\x66\x6c\x69\x68\x61\x69\x62\x6f',
+      id: location['\x70\x61\x74\x68\x6e\x61\x6d\x65'],
+      perPage: 20,
+      admin: ['\x78\x66\x6c\x69\x68\x61\x69\x62\x6f'],
       distractionFreeMode: false
-    })
+    };
   </script>
 
   <!-- <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css" /> -->

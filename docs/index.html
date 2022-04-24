@@ -228,7 +228,7 @@
             divEle.className = 'gitalk-container';
             divEle.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
             domObj.appendTo(domObj.find('.content'), divEle);
-            gitalk = new Gitment(Object.assign(gitalkConfig, { id: !label ? 'home' : label }));
+            gitalk = new Gitalk(Object.assign(gitalkConfig, { id: !label ? 'home' : label }));
             gitalk.render('gitalk-container-' + label);
           });
         },
@@ -301,32 +301,42 @@
   <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
 
   <!-- gitalk -->
-  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-  
-  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
   <script>
     // var gitalkConfig = {
-    //   clientID: 'e46f6dec7c07145c652c',
-    //     clientSecret: 'd1a0b627f9b76d21bd3080d1777d0aa0ad55dd83',
-    //     accessToken: '6a2f4d91a1f188a2089e70c2a7b63628f3e9e664',
-    //     repo: 'gitalk',
-    //     owner: 'gitalk',
-    //     admin: ['booxood', 'mamboer'],
-    //     id: 'Demo',
-    //     distractionFreeMode: true
+    //   clientID: '987eb43bc737bf99d17a',
+    //   clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',
+    //   repo: 'interviewFe',
+    //   owner: 'luuman',
+    //   githubID: 'luuman',
+    //   id: location['pathname'],
+    //   perPage: 20,
+    //   admin: ['luuman'],
+    //   title: location.hash.match(/#(.*?)([?]|$)/)[1],
+    //   id: location.hash.match(/#(.*?)([?]|$)/)[1],
+    //   distractionFreeMode: false
     // };
-    var gitalkConfig = {
+    var gitalk = new Gitalk({
       clientID: '987eb43bc737bf99d17a',
       clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',
       repo: 'interviewFe',
       owner: 'luuman',
-      githubID: '\x78\x66\x6c\x69\x68\x61\x69\x62\x6f',
-      id: location['\x70\x61\x74\x68\x6e\x61\x6d\x65'],
+      githubID: 'luuman',
+      id: location['pathname'],
       perPage: 20,
-      admin: ['\x78\x66\x6c\x69\x68\x61\x69\x62\x6f'],
-      distractionFreeMode: false
-    };
+      admin: ['luuman'],
+      title: location.hash.match(/#(.*?)([?]|$)/)[1],
+      id: location.hash.match(/#(.*?)([?]|$)/)[1],
+    })
+    // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
+    window.onhashchange = function(event){
+      if(event.newURL.split('?')[0] !== event.oldURL .split('?')[0]) {
+        location.reload()
+      }
+    }
   </script>
 
   <!-- <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css" /> -->

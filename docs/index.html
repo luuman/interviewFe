@@ -228,7 +228,7 @@
             divEle.className = 'gitalk-container';
             divEle.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
             domObj.appendTo(domObj.find('.content'), divEle);
-            gitalk = new Gitalk(Object.assign(gitalkConfig, { id: !label ? 'home' : label }));
+            gitalk = new Gitment(Object.assign(gitmentConfig));
             gitalk.render('gitalk-container-' + label);
           });
         },
@@ -302,23 +302,25 @@
 
   <!-- gitalk -->
   <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
+  <!-- <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script> -->
   <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
   <script>
-    // var gitalkConfig = {
-    //   clientID: '987eb43bc737bf99d17a',
-    //   clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',
-    //   repo: 'interviewFe',
-    //   owner: 'luuman',
-    //   githubID: 'luuman',
-    //   id: location['pathname'],
-    //   perPage: 20,
-    //   admin: ['luuman'],
-    //   title: location.hash.match(/#(.*?)([?]|$)/)[1],
-    //   id: location.hash.match(/#(.*?)([?]|$)/)[1],
-    //   distractionFreeMode: false
-    // };
+    var gitmentConfig = {
+      clientID: '987eb43bc737bf99d17a',
+      clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',
+      repo: 'interviewFe',
+      owner: 'luuman',
+      githubID: 'luuman',
+      id: location['pathname'],
+      perPage: 20,
+      admin: ['luuman'],
+      title: location.hash.match(/#(.*?)([?]|$)/)[1],
+      id: location.hash.match(/#(.*?)([?]|$)/)[1],
+      distractionFreeMode: false
+    };
     var gitalk = new Gitalk({
       clientID: '987eb43bc737bf99d17a',
       clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',

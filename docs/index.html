@@ -42,6 +42,11 @@
 
   <!-- darklight-theme -->
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/style.min.css" title="docsify-darklight-theme" type="text/css" />
+
+  <!-- sidebar -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar-folder.min.css" />
+
   <style type="text/css">
     #docsify-darklight-theme{
       top: -4px;
@@ -74,11 +79,15 @@
     // Docsify
     window.$docsify = {
       coverpage: true,
-      // loadNavbar: true,
       loadSidebar: true,
+      alias: {
+        '/.*/_sidebar.md': '/_sidebar.md',
+      },
+      subMaxLevel: 3,
+      sidebarDisplayLevel: 1,
       subMaxLevel: 4,
-      // maxLevel: 2,
-      // mergeNavbar: true,
+      maxLevel: 2,
+      mergeNavbar: true,
       formatUpdated: '{MM}/{DD} {HH}:{mm}',
       ga: 'UA-50048801-2',
       // codesponsor: 'id',
@@ -267,11 +276,30 @@
   <link rel="stylesheet" href="//unpkg.com/docsify-accordion/src/style.css">
   <script src="//unpkg.com/docsify-accordion/src/index.js"></script>
 
+  <!-- sidebar-collapse -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+
+  <!-- gitalk -->
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script>
+    const gitalk = new Gitalk({
+      clientID: '7f50019c6a02c37e7aca',
+      clientSecret: '25dc8d753e2c73fad1ea5845e3caa7700555dfa7',
+      repo: 'luuman.github.io',
+      owner: 'luuman',
+      admin: ['Github repo collaborators, only these guys can initialize github issues'],
+      // facebook-like distraction free mode
+      distractionFreeMode: false
+    })
+  </script>
+
   <!-- <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css" /> -->
   
   <!-- <div class="calendar">
       Loading the data just for you.
     </div> -->
+  
   <script>
     window.onload = function () {
       var container = document.getElementById("container");

@@ -25,7 +25,6 @@
   <meta name="msapplication-TileImage" content="./_media/icon/Icon-144.png">
   <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-TileColor" content="#ffffff">
-
   <!-- Stylesheets -->
   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css" title="Simple"> -->
   <!-- <link rel="stylesheet" href="https://luuman.github.io/docsify-themeable/assets/css/main.css"> -->
@@ -63,7 +62,7 @@
       background: var(--background);
     }
     body{
-      /* background: #000; */
+      background: var(--background);
     }
     main {
       z-index: 1;
@@ -162,6 +161,7 @@
         }
       },
       plugins: [
+        // 二级文档归纳
         function (hook, vm) {
           hook.beforeEach(function (html) {
             let urlList = window.location.href.split('/')
@@ -169,7 +169,7 @@
               let arrayList = html.split(',');
               var name = arrayList[0];
               var value = arrayList[1];
-              console.log(value)
+              // console.log(value)
               if (!value) return html
               var editHtml = `${name} \n`
               editHtml += '\n'
@@ -177,7 +177,7 @@
                 editHtml += `[filename](../${name}/${i + 1}.md ':include :type=text')\n`
                 editHtml += '\n'
               }
-              console.log(editHtml)
+              // console.log(editHtml)
               return editHtml
             }
           });
@@ -198,6 +198,7 @@
             );
           });
         },
+        // icon ☑ ☒ 已读未读
         function(hook, vm) {
           hook.beforeEach(function(html) {
             // console.log('html', html)
@@ -211,13 +212,19 @@
             return htmlMD
           });
         },
+        // gitalk
         function(hook, vm) {
           hook.beforeEach(function(html) {
+            if ( vm.route.path === '/') return
             return html + '\n' + '⏰ 更新于： {docsify-updated} ';
           });
           hook.doneEach(function() {
-            var label, domObj, main, divEle, gitalk;
+            if ( vm.route.path === '/') return
+            console.log('afterEach', location.hash.match(/#(.*?)([?]|$)/)[1])
+            
+            var label, labelType, domObj, main, divEle, gitalk;
             label = vm.route.path.split('/').pop();
+            labelType = vm.route.path;
             domObj = Docsify.dom;
             main = domObj.getNode('#main');
             Array.apply(null, document.querySelectorAll('div.gitalk-container')).forEach(function(ele) {
@@ -228,13 +235,22 @@
             divEle.className = 'gitalk-container';
             divEle.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
             domObj.appendTo(domObj.find('.content'), divEle);
-            gitalk = new Gitment(Object.assign(gitmentConfig));
+            console.log(vm.route.path.split('/'))
+            gitalk = new Gitalk(Object.assign(gitalkConfig, { id: !labelType ? 'home' :  labelType }));
             gitalk.render('gitalk-container-' + label);
           });
         },
         function(hook, vm) {
           hook.afterEach(function(html, next) {
-            console.log(html, 'afterEach')
+            let urlList = window.location.href.split('/')
+            if (urlList.length === 6 && urlList[5] === '') {
+              console.log(html, 'Home page')
+              GitHubCalendar(".calendar", "luuman", {
+                responsive: true,
+                tooltips: true
+              });
+              containerInit();
+            }
             next(html);
           });
         }
@@ -300,15 +316,20 @@
   <!-- sidebar-collapse -->
   <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
 
-  <!-- gitalk -->
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-  <!-- <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script> -->
-  <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+  <!-- Include the library. -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css"/> -->
+  <link rel="stylesheet" href="./css/calendar-responsive.css"/>
+  <!-- <script src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"></script> -->
+  <script src="./js/github-calendar.min.js"></script>
 
-  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <!-- gitalk -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <link rel="stylesheet" href="./css/gitalk.css">
+
+
+  <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
   <script>
-    var gitmentConfig = {
+    var gitalkConfig = {
       clientID: '987eb43bc737bf99d17a',
       clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',
       repo: 'interviewFe',
@@ -321,24 +342,24 @@
       id: location.hash.match(/#(.*?)([?]|$)/)[1],
       distractionFreeMode: false
     };
-    var gitalk = new Gitalk({
-      clientID: '987eb43bc737bf99d17a',
-      clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',
-      repo: 'interviewFe',
-      owner: 'luuman',
-      githubID: 'luuman',
-      id: location['pathname'],
-      perPage: 20,
-      admin: ['luuman'],
-      title: location.hash.match(/#(.*?)([?]|$)/)[1],
-      id: location.hash.match(/#(.*?)([?]|$)/)[1],
-    })
-    // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
-    window.onhashchange = function(event){
-      if(event.newURL.split('?')[0] !== event.oldURL .split('?')[0]) {
-        location.reload()
-      }
-    }
+    // var gitalk = new Gitalk({
+    //   clientID: '987eb43bc737bf99d17a',
+    //   clientSecret: 'ee57c838823856a7b152e09431156b4c56bf8617',
+    //   repo: 'interviewFe',
+    //   owner: 'luuman',
+    //   githubID: 'luuman',
+    //   id: location['pathname'],
+    //   perPage: 20,
+    //   admin: ['luuman'],
+    //   title: location.hash.match(/#(.*?)([?]|$)/)[1],
+    //   id: location.hash.match(/#(.*?)([?]|$)/)[1],
+    // })
+    // // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
+    // window.onhashchange = function(event){
+    //   if(event.newURL.split('?')[0] !== event.oldURL .split('?')[0]) {
+    //     location.reload()
+    //   }
+    // }
   </script>
 
   <!-- <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css" /> -->
@@ -348,7 +369,8 @@
     </div> -->
   
   <script>
-    window.onload = function () {
+    // 地球仪
+    function containerInit() {
       var container = document.getElementById("container");
       var width = container.clientWidth;
       var height = container.clientHeight;

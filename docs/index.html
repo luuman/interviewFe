@@ -51,6 +51,7 @@
       top: -4px;
     }
   </style>
+  <!-- 手风琴 -->
   <style type="text/css">
     ul.accordion-wrapper > li.active > p:first-of-type::after{
       border-bottom-color: var(--background) !important;
@@ -67,6 +68,54 @@
     main {
       z-index: 1;
       background: var(--background);
+    }
+  </style>
+  <!-- 语法高亮 -->
+  <style type="text/css">
+    pre:after {
+      color: var(--codeTypeColor);
+      color: #fff;
+      box-sizing: border-box;
+      content: attr(data-lang);
+      text-transform: capitalize;
+      height: 30px;
+      line-height: 30px;
+      background: var(--codeTitleColor);
+      font-size: 16px;
+      position: absolute;
+      margin-top: -30px;
+      left: 0;
+      top: 30px;
+      width: 100%;
+      font-family: Ubuntu, sans-serif;
+      font-weight: 700;
+      padding: 0 80px;
+      text-indent: 15px;
+      text-align: center;
+      float: left;
+      z-index: 0;
+      border-radius: 5px 5px 0 0;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      pointer-events: none;
+    }
+    pre:before {
+      content: " ";
+      position: absolute;
+      border-radius: 50%;
+      background: #fc625d;
+      width: 12px;
+      height: 12px;
+      left: 12px;
+      top: 28px;
+      margin-top: -18px;
+      box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
+      z-index: 2;
+    }
+    .markdown-section pre{
+      padding-top: 10px;
     }
   </style>
 </head>
@@ -92,7 +141,7 @@
       // codesponsor: 'id',
       search: {
         maxAge: 86400000, // 过期时间，单位毫秒，默认一天
-        // paths: auto, // or 'auto'
+        paths: ['/note/daily/'], // or 'auto'
         placeholder: '搜索',
         noData: '找不到结果!',
         // 搜索标题的最大程级, 1 - 6
@@ -128,11 +177,14 @@
         codeFontFamily: 'Roboto Mono, Monaco, courier, monospace',
         bodyFontSize: '17px',
         dark: {
+          'nomnoml-svg-stroke': '#42b983',
+          'nomnoml-svg-fill-2': '#0e2233',
           accent: '#42b983',
           toogleBackground: '#ffffff',
           background: '#091a28',
           textColor: '#c0c0c0',
           codeTextColor: '#00bc8c',
+          codeTitleColor: '#2a2e33',
           codeBackgroundColor: '#0e2233',
           borderColor: '#0d2538',
           blockQuoteColor: '#858585',
@@ -144,16 +196,19 @@
           toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/icons/sun.svg)'
         },
         light: {
+          'nomnoml-svg-stroke': '#42b983',
+          'nomnoml-svg-fill-2': '#0e2233',
           accent: '#42b983',
           toogleBackground: '#091a28',
           background: '#ffffff',
           textColor: '#34495e',
           codeTextColor: '#525252',
+          codeTitleColor: '#858585',
           codeBackgroundColor: '#f8f8f8',
           borderColor: 'rgba(0, 0, 0, 0.07)',
           blockQuoteColor: '#858585',
           highlightColor: '#d22778',
-          sidebarSublink: '#b4b4b4',
+          sidebarSublink: '#505d6b',
           codeTypeColor: '#091a28',
           coverBackground: '#000',
           // coverBackground: 'linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%,hsl(181, 100%, 85%) 100%)',
@@ -186,7 +241,7 @@
         function(hook, vm) {
           hook.beforeEach(function(html) {
             var url =
-              'https://github.com/docsifyjs/docsify/blob/master/docs/' +
+              'https://github.com/luuman/interviewFe/blob/gh-page/docs/' +
               vm.route.file;
             var editHtml = '[📝 Edit MD](' + url + ')\n';
             return (
@@ -285,7 +340,34 @@
   
   <!-- copy-code -->
   <script src="//unpkg.com/docsify-copy-code"></script>
-  
+  <style type="text/css">
+    .docsify-copy-code-button{
+      color: #333;
+      cursor: pointer;
+      display: inline-block;
+      font-weight: 700;
+      line-height: 1.6;
+      opacity: 0;
+      outline: 0;
+      padding: 2px 6px;
+      position: absolute;
+      transition: opacity 0.3s ease-in-out;
+      vertical-align: middle;
+      white-space: nowrap;
+      user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      right: 1px;
+      top: px;
+      z-index: 9999;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      font-size: 0.8125em;
+    }
+  </style>
   <!-- 图片缩放 -->
   <script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
   
@@ -298,7 +380,9 @@
   <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
   
   <!-- mermaid -->
-  <script type="text/javascript" src="//unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  <script src="//unpkg.com/mermaid/dist/mermaid.js"></script>
+  <script src="//unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
 
   <!-- CDN files for docsify-katex -->
   <!-- or <script src="//cdn.jsdelivr.net/gh/upupming/docsify-katex@latest/dist/docsify-katex.js"></script> -->
@@ -311,10 +395,12 @@
   
   <!-- docsify-accordion -->
   <link rel="stylesheet" href="//unpkg.com/docsify-accordion/src/style.css">
-  <script src="//unpkg.com/docsify-accordion/src/index.js"></script>
+  <!-- <script src="//unpkg.com/docsify-accordion/src/index.js"></script> -->
+  <!-- <link rel="stylesheet" href="//unpkg.com/docsify-accordion/src/style.css"> -->
+  <script src="./js/docsify-accordion.js"></script>
 
   <!-- sidebar-collapse -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <!-- <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script> -->
 
   <!-- Include the library. -->
   <!-- <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css"/> -->
@@ -326,6 +412,10 @@
   <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
   <link rel="stylesheet" href="./css/gitalk.css">
 
+  <!-- nomnoml -->
+  <!-- <script src="//cdn.jsdelivr.net/npm/graphre@0.1/dist/graphre.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/nomnoml@1.4/dist/nomnoml.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-nomnoml@1/dist/plugin.min.js"></script> -->
 
   <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
   <script>

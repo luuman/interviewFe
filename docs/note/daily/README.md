@@ -1,1 +1,1 @@
-daily,3
+daily,4

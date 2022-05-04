@@ -219,8 +219,8 @@
         // 二级文档归纳
         function (hook, vm) {
           hook.beforeEach(function (html) {
-            let urlList = window.location.href.split('/')
-            if (urlList.length === 7 && urlList[6] === '') {
+            let urlList = vm.route.path.split('/')
+            if (urlList.length === 4 && urlList[3] === '') {
               let arrayList = html.split(',');
               var name = arrayList[0];
               var value = arrayList[1];
